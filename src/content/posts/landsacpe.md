@@ -1,6 +1,7 @@
 ---
-title: Landsacpe
+title: Landsacpe-风景
 published: 2025-11-29
+image: ./IMG64.jpg
 description: 风景
 tags: [landsacpe]
 category: 照片

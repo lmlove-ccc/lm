@@ -1,13 +1,12 @@
 ---
-title: Landsacpe-风景
+title: Landscape-风景
 published: 2025-11-29
-image: ./IMG64.jpg
 description: 风景
-tags: [landsacpe]
+tags: [landscape]
 category: 照片
 draft: false
 ---
-# landsacpe
+# landscape
 **以下是我在去年所拍的**
 ![](../../../public/images/DSC_5544.jpg)
 ![](<../../../public/images/DSC_8291 拷贝.jpg>)

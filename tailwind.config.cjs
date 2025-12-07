@@ -6,7 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Roboto", "sans-serif", ...defaultTheme.fontFamily.sans],
+        // use CSS variable so the site font can be switched to a local font via --font-sans
+        sans: ["var(--font-sans)", "sans-serif", ...defaultTheme.fontFamily.sans],
       },
     },
   },

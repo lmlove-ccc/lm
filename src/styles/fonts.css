@@ -1,0 +1,51 @@
+/*
+  本地字体支持文件
+
+  使用说明：
+  1) 将你选择的字体文件（建议 woff2 / woff）放在项目的 `public/fonts/` 目录下。
+     例如：public/fonts/MyLocalSans-Regular.woff2, public/fonts/MyLocalSans-Bold.woff2
+  2) 在下面的 @font-face 中替换 font-family 名称（MyLocalSans）与 src 路径（如果你改了文件名）。
+  3) 如果需要更多字重（400/500/700），请复制并修改以下 @font-face 区块。
+  4) 页面会通过 CSS 变量 --font-sans 使用该字体，Tailwind 已配置来优先使用该变量。
+
+  该文件由项目在布局中导入（已替换原来的 @fontsource/roboto 导入）。
+*/
+
+@font-face {
+  font-family: 'MyLocalSans'; /* <-- 将此替换为你的字体名 */
+  src: url('/fonts/MyLocalSans-Regular.woff2') format('woff2'),
+       url('/fonts/MyLocalSans-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MyLocalSans';
+  src: url('/fonts/MyLocalSans-Bold.woff2') format('woff2'),
+       url('/fonts/MyLocalSans-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: bold;
+  font-display: swap;
+}
+
+:root {
+  /* 默认情况下将站点主字体映射到一个 CSS 变量，Tailwind 已配置使用该变量 */
+  --font-sans: 'MyLocalSans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* 如果你想单独控制文章正文（例如使用衬线字体），可以在这里定义 --font-serif */
+/*
+@font-face {
+  font-family: 'MyLocalSerif';
+  src: url('/fonts/MyLocalSerif-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --font-serif: 'MyLocalSerif', Georgia, 'Times New Roman', serif;
+}
+*/
+
+/* 额外：为确保预加载，你也可以在 Layout 中添加 document.fonts.load 调用（可选） */

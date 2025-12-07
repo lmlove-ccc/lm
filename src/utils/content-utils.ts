@@ -10,6 +10,19 @@ async function getRawSortedPosts() {
 	});
 
 	const sorted = allBlogPosts.sort((a, b) => {
+		// 1) Pinned posts first
+		const aPinned = Boolean(a.data.pinned);
+		const bPinned = Boolean(b.data.pinned);
+		if (aPinned !== bPinned) return aPinned ? -1 : 1;
+
+		// 2) If both pinned, sort by pinOrder (smaller = higher priority)
+		if (aPinned && bPinned) {
+			const aOrder = typeof a.data.pinOrder === "number" ? a.data.pinOrder : 0;
+			const bOrder = typeof b.data.pinOrder === "number" ? b.data.pinOrder : 0;
+			if (aOrder !== bOrder) return aOrder < bOrder ? -1 : 1;
+		}
+
+		// 3) Otherwise sort by published date (newer first)
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
 		return dateA > dateB ? -1 : 1;

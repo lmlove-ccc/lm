@@ -12,26 +12,17 @@
 */
 
 @font-face {
-  font-family: 'MyLocalSans'; /* <-- 将此替换为你的字体名 */
-  src: url('/fonts/MyLocalSans-Regular.woff2') format('woff2'),
-       url('/fonts/MyLocalSans-Regular.woff') format('woff');
+  /* 使用你提供的 TTF 字体文件（FZKTJW.TTF）作为站点的无衬线字体 */
+  font-family: 'FZKTJW';
+  src: url('/fonts/FZKTJW.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'MyLocalSans';
-  src: url('/fonts/MyLocalSans-Bold.woff2') format('woff2'),
-       url('/fonts/MyLocalSans-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: bold;
-  font-display: swap;
-}
-
 :root {
-  /* 默认情况下将站点主字体映射到一个 CSS 变量，Tailwind 已配置使用该变量 */
-  --font-sans: 'MyLocalSans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  /* 将主站点字体变量指向本地字体 */
+  --font-sans: 'FZKTJW', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
 }
 
 /* 如果你想单独控制文章正文（例如使用衬线字体），可以在这里定义 --font-serif */

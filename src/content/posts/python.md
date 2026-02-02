@@ -172,7 +172,7 @@ print('1') if a > b else print('2')
 >       满足条件2该做的事情
 >
 >   elif 条件3：
->
+>    
 >        满足条件3该做的事情
 >      .......
 > 
@@ -183,9 +183,7 @@ print('1') if a > b else print('2')
 > if 条件1：
 >
 >      事件1
->
 >      if 条件2：
->
 >         事件2
 > else：
 > 
@@ -204,11 +202,10 @@ else:
 其输出为 **具有权限 初级权限**
 ## while 循环
 > 基本格式
->
+>           
 > while条件：
 >
 >     循环体（条件满足时做的事）
->
 >     改变变量
 ### 例如
 ~~~python
@@ -238,3 +235,54 @@ while i <= 3: #这里是计算二的四次方 但需注意 几次方=1+某个数
 print(s)
 ~~~
 其输出为 **16**
+## while 循环嵌套
+> 基本格式
+>
+> while 条件1
+>     
+>       循环体1
+>       while 条件2
+>             循环体2
+>             改变变量2
+>       改变变量1
+> .....
+## for 循环
+> 基本格式
+> 
+> for 临时变量 in 可迭代对象：
+> 
+>     循环满足条件时执行的代码
+### 例如
+### 计算 1-100 的和
+~~~python
+s = 0
+for i in range(1,101):
+    s += i
+print(s)
+~~~
+其输出结果为 **5050**
+### 计算3！
+~~~python
+s = 1
+for i in range(1,4):
+    s *= i
+print(s)
+~~~
+其输出为 **6**
+## break 与 continue
+~~~python
+for i in range(1,10):
+    print(i)
+    if i == 4:
+        print(True)
+        break
+~~~
+其输出为 **1 2 3 4 True**
+~~~python
+for i in range(1,10):
+    if i == 4:
+        print(True,end=" ")
+        continue
+    print(i, end=" ")
+~~~
+其输出为 **1 2 3 True 5 6 7 8 9**

@@ -10,6 +10,12 @@ async function getRawSortedPosts() {
 	});
 
 	const sorted = allBlogPosts.sort((a, b) => {
+		const pinA = a.data.pinned ?? false;
+		const pinB = b.data.pinned ?? false;
+
+		if (pinA !== pinB) {
+			return pinA ? -1 : 1; 
+		}
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
 		return dateA > dateB ? -1 : 1;

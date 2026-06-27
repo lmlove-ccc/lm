@@ -1,0 +1,381 @@
+---
+// src/components/TableOfContents.astro
+export interface Heading {
+    depth: number;
+    slug: string;
+    text: string;
+}
+
+export interface TocItem extends Heading {
+    children: TocItem[];
+}
+
+const { headings = [] } = Astro.props as { headings: Heading[] };
+
+function buildToc(headings: Heading[]): TocItem[] {
+    const toc: TocItem[] = [];
+    const stack: TocItem[] = [];
+
+    for (const heading of headings) {
+        const item: TocItem = { ...heading, children: [] };
+
+        while (stack.length > 0 && stack[stack.length - 1].depth >= heading.depth) {
+            stack.pop();
+        }
+
+        if (stack.length === 0) {
+            toc.push(item);
+        } else {
+            stack[stack.length - 1].children.push(item);
+        }
+        stack.push(item);
+    }
+
+    return toc;
+}
+
+const tocTree = buildToc(headings);
+const hasToc = tocTree.length > 0;
+
+function renderTocItems(items: TocItem[]) {
+    return items.map((_item) => (
+        <li class={`toc-item level-${item.depth}`}>
+            <a href={`#${item.slug}`} class="toc-link" data-slug={item.slug}>
+                {item.text}
+            </a>
+            {item.children.length > 0 && (
+                <ul class="toc-list">
+                    {renderTocItems(item.children)}
+                </ul>
+            )}
+        </li>
+    ));
+}
+---
+
+{
+    hasToc && (
+        <div class="toc-container" id="tocContainer">
+            <div class="toc-progress">
+                <svg viewBox="0 0 120 120" class="progress-ring">
+                    <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+                    <circle
+                        class="progress-ring-bar"
+                        id="progressRing"
+                        cx="60"
+                        cy="60"
+                        r="52"
+                        stroke-dasharray="326.73"
+                        stroke-dashoffset="326.73"
+                    />
+                </svg>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+
+            <div class="toc-header">
+                <span class="toc-title">📑 目录</span>
+                <span class="toc-count">{headings.length} 章节</span>
+            </div>
+
+            <nav class="toc-nav" id="tocNav">
+                <ul class="toc-list">
+                    {renderTocItems(tocTree)}
+                </ul>
+            </nav>
+        </div>
+    )
+}
+
+<style is:global>
+    .toc-container {
+        position: sticky;
+        top: 100px;
+        align-self: flex-start;
+        width: 260px;
+        max-height: calc(100vh - 140px);
+        padding: 20px 16px 16px 16px;
+        background: var(--toc-bg, rgba(255,255,255,0.85));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        border: 1px solid var(--toc-border, rgba(0,0,0,0.06));
+        box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        scrollbar-width: thin;
+        scrollbar-color: var(--toc-scrollbar, #d1d5db) transparent;
+    }
+    .toc-container::-webkit-scrollbar { width: 4px; }
+    .toc-container::-webkit-scrollbar-track { background: transparent; }
+    .toc-container::-webkit-scrollbar-thumb {
+        background: var(--toc-scrollbar, #d1d5db);
+        border-radius: 8px;
+    }
+    :root[data-theme="dark"] .toc-container {
+        --toc-bg: rgba(30,30,40,0.92);
+        --toc-border: rgba(255,255,255,0.06);
+        --toc-scrollbar: #4b5563;
+    }
+
+    .toc-progress {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 14px auto;
+        flex-shrink: 0;
+    }
+    .progress-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .progress-ring-bg {
+        fill: none;
+        stroke: var(--toc-ring-bg, #e5e7eb);
+        stroke-width: 6;
+    }
+    .progress-ring-bar {
+        fill: none;
+        stroke: var(--toc-ring-color, #3b82f6);
+        stroke-width: 6;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.15s ease-out;
+    }
+    :root[data-theme="dark"] .progress-ring-bg { --toc-ring-bg: #374151; }
+    :root[data-theme="dark"] .progress-ring-bar { --toc-ring-color: #60a5fa; }
+
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--toc-text-primary, #1f2937);
+        letter-spacing: -0.5px;
+        font-variant-numeric: tabular-nums;
+    }
+    :root[data-theme="dark"] .progress-text { --toc-text-primary: #f3f4f6; }
+
+    .toc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0 10px 0;
+        border-bottom: 1px solid var(--toc-divider, rgba(0,0,0,0.05));
+        margin-bottom: 12px;
+    }
+    :root[data-theme="dark"] .toc-header { --toc-divider: rgba(255,255,255,0.06); }
+    .toc-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--toc-text-primary, #1f2937);
+    }
+    .toc-count {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--toc-text-secondary, #9ca3af);
+        background: var(--toc-count-bg, rgba(0,0,0,0.04));
+        padding: 2px 10px;
+        border-radius: 20px;
+    }
+    :root[data-theme="dark"] .toc-count {
+        --toc-count-bg: rgba(255,255,255,0.06);
+        --toc-text-secondary: #6b7280;
+    }
+
+    .toc-nav { flex: 1; overflow-y: auto; padding-right: 4px; }
+    .toc-list { list-style: none; margin: 0; padding: 0; }
+    .toc-list .toc-list { padding-left: 16px; margin-top: 2px; }
+    .toc-item { margin: 0; padding: 0; line-height: 1.5; }
+
+    .toc-link {
+        display: block;
+        padding: 4px 8px 4px 10px;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--toc-link-color, #4b5563);
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        border-left: 2px solid transparent;
+        cursor: pointer;
+    }
+    .toc-link:hover {
+        color: var(--toc-link-hover, #3b82f6);
+        background: var(--toc-link-hover-bg, rgba(59,130,246,0.06));
+    }
+    .toc-link.active {
+        color: var(--toc-link-active, #3b82f6);
+        font-weight: 600;
+        border-left-color: var(--toc-link-active, #3b82f6);
+        background: var(--toc-link-active-bg, rgba(59,130,246,0.08));
+    }
+    .toc-item.level-2 .toc-link { font-size: 13px; font-weight: 500; }
+    .toc-item.level-3 .toc-link { font-size: 12.5px; opacity: 0.85; }
+    .toc-item.level-4 .toc-link { font-size: 12px; opacity: 0.7; }
+    .toc-item.level-5 .toc-link { font-size: 11.5px; opacity: 0.6; }
+    .toc-item.level-6 .toc-link { font-size: 11px; opacity: 0.5; }
+
+    :root[data-theme="dark"] .toc-link {
+        --toc-link-color: #9ca3af;
+        --toc-link-hover: #60a5fa;
+        --toc-link-hover-bg: rgba(96,165,250,0.08);
+        --toc-link-active: #60a5fa;
+        --toc-link-active-bg: rgba(96,165,250,0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .toc-container {
+            position: relative;
+            top: 0;
+            width: 100%;
+            max-height: none;
+            margin: 20px 0 0 0;
+            padding: 16px 14px;
+            border-radius: 12px;
+            background: var(--toc-bg-mobile, rgba(255,255,255,0.8));
+        }
+        :root[data-theme="dark"] .toc-container { --toc-bg-mobile: rgba(30,30,40,0.9); }
+        .toc-progress { width: 64px; height: 64px; margin: 0 auto 10px auto; }
+        .progress-text { font-size: 15px; }
+        .toc-header { padding: 4px 0 8px 0; margin-bottom: 10px; }
+        .toc-title { font-size: 13px; }
+        .toc-link { font-size: 12.5px; padding: 3px 6px 3px 8px; }
+        .toc-item.level-2 .toc-link { font-size: 12.5px; }
+        .toc-item.level-3 .toc-link { font-size: 12px; }
+        .toc-list .toc-list { padding-left: 12px; }
+    }
+    @media (max-width: 640px) {
+        .toc-container { padding: 12px 12px; margin: 12px 0 0 0; border-radius: 10px; }
+        .toc-progress { width: 56px; height: 56px; }
+        .progress-text { font-size: 13px; }
+        .progress-ring-bg, .progress-ring-bar { stroke-width: 5; }
+        .toc-title { font-size: 12px; }
+        .toc-count { font-size: 10px; padding: 1px 8px; }
+        .toc-link { font-size: 12px; padding: 2px 4px 2px 6px; }
+        .toc-item.level-2 .toc-link { font-size: 12px; }
+        .toc-item.level-3 .toc-link { font-size: 11.5px; }
+        .toc-list .toc-list { padding-left: 10px; }
+    }
+    :root[data-theme="dark"] .toc-container {
+        border-color: rgba(255,255,255,0.06);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    html { scroll-behavior: smooth; }
+</style>
+
+<script>
+    // 客户端逻辑（进度 + 高亮）
+    const progressRing = document.getElementById('progressRing');
+    const progressText = document.getElementById('progressText');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    if (progressRing && progressText) {
+        const CIRCUMFERENCE = 326.73;
+
+        function getHeadingPositions() {
+            const headings = [];
+            for (const link of tocLinks) {
+                const slug = link.dataset.slug;
+                if (!slug) continue;
+                const el = document.getElementById(slug);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    headings.push({
+                        slug,
+                        top: rect.top + window.scrollY,
+                        bottom: rect.bottom + window.scrollY,
+                    });
+                }
+            }
+            return headings;
+        }
+
+        function updateProgress(scrollTop, scrollHeight, clientHeight) {
+            const maxScroll = Math.max(scrollHeight - clientHeight, 1);
+            const scrolled = Math.min(Math.max(scrollTop, 0), maxScroll);
+            const percent = Math.min((scrolled / maxScroll) * 100, 100);
+            const offset = CIRCUMFERENCE - (percent / 100) * CIRCUMFERENCE;
+            progressRing.setAttribute('stroke-dashoffset', String(offset));
+            progressText.textContent = `${Math.round(percent)}%`;
+        }
+
+        function updateActiveHeading(scrollTop) {
+            const headings = getHeadingPositions();
+            if (!headings.length) return;
+            let activeSlug = null;
+            for (let i = headings.length - 1; i >= 0; i--) {
+                if (scrollTop >= headings[i].top - 80) {
+                    activeSlug = headings[i].slug;
+                    break;
+                }
+            }
+            if (!activeSlug && headings.length) activeSlug = headings[0].slug;
+            for (const link of tocLinks) {
+                const slug = link.dataset.slug;
+                if (slug && slug === activeSlug) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            }
+        }
+
+        let ticking = false;
+        function onScroll() {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const st = window.scrollY;
+                    const sh = document.documentElement.scrollHeight;
+                    const ch = window.innerHeight;
+                    updateProgress(st, sh, ch);
+                    updateActiveHeading(st);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        // 点击平滑滚动
+        for (const link of tocLinks) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const slug = link.dataset.slug;
+                if (!slug) return;
+                const target = document.getElementById(slug);
+                if (target) {
+                    const offset = 80;
+                    const pos = target.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top: pos, behavior: 'smooth' });
+                    for (const l of tocLinks) l.classList.remove('active');
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // 初始化
+        const initSt = window.scrollY;
+        updateProgress(initSt, document.documentElement.scrollHeight, window.innerHeight);
+        updateActiveHeading(initSt);
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // 窗口变化重算
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const st = window.scrollY;
+                updateProgress(st, document.documentElement.scrollHeight, window.innerHeight);
+                updateActiveHeading(st);
+            }, 100);
+        });
+
+        // 图片加载后重算
+        const observer = new MutationObserver(() => {
+            const st = window.scrollY;
+            updateProgress(st, document.documentElement.scrollHeight, window.innerHeight);
+            updateActiveHeading(st);
+        });
+        const content = document.querySelector('article') || document.querySelector('.post-content') || document.querySelector('main');
+        if (content) {
+            observer.observe(content, { childList: true, subtree: true });
+        }
+    }
+</script>

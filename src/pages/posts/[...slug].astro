@@ -6,7 +6,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { getCategoryUrl, getDir, getPostUrlBySlug, getTagUrl } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
@@ -47,10 +47,27 @@ const jsonLd = {
 ---
 <MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
-    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
-        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
-            {}
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4 lg:ml-[-2.5rem] xl:ml-[-4rem]">
+        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full max-w-[860px] mx-auto", {}
         ]}>
+            <div class="mb-4 flex flex-col gap-3 rounded-xl border border-[var(--line-divider)]/70 bg-[var(--card-bg)]/80 p-3 shadow-sm md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[var(--btn-regular-bg)] text-[var(--primary)] shadow-sm">
+                        <img src={profileConfig.avatar || ""} alt="author" class="h-full w-full object-cover" />
+                    </div>
+                    <div>
+                        <div class="text-base font-semibold text-[var(--title-text)]">{profileConfig.name}</div>
+                        <div class="text-sm text-neutral-500 dark:text-neutral-400">{profileConfig.bio}</div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    {entry.data.category && <a href={getCategoryUrl(entry.data.category)} class="rounded-full bg-[var(--btn-regular-bg)] px-3 py-1.5 text-base text-[var(--btn-content)] transition hover:text-[var(--primary)]">{entry.data.category}</a>}
+                    {entry.data.tags?.slice(0, 4).map((tag) => (
+                        <a href={getTagUrl(tag)} class="rounded-full border border-[var(--line-divider)] px-3 py-1.5 text-base text-neutral-600 transition hover:text-[var(--primary)] dark:text-neutral-300">#{tag}</a>
+                    ))}
+                </div>
+            </div>
+
             <!-- word count and reading time -->
             <div class="flex flex-row text-black/30 dark:text-white/30 gap-5 mb-3 transition onload-animation">
                 <div class="flex flex-row items-center">
@@ -111,7 +128,7 @@ const jsonLd = {
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
+    <div class="mx-auto flex w-full max-w-[860px] flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden">
         <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
             {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >

@@ -11,6 +11,5 @@ draft: false
 ![](../../../public/images/moonlightdrive.png)
 ![](../../../public/images/portal.png)
 ![](../../../public/images/rain2.png)
-![](../../../public/images/seaty.png)
 ![](../../../public/images/wintersnow.png)
 ![](../../../public/images/dawn.png)

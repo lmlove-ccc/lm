@@ -1,0 +1,24 @@
+---
+interface TocItem {
+    depth: number;
+    slug: string;
+    text: string;
+    children: TocItem[];
+}
+
+interface Props {
+    item: TocItem;
+}
+
+const { item } = Astro.props as Props;
+---
+<li class={`toc-item level-${item.depth}`}>
+    <a href={`#${item.slug}`} class="toc-link" data-slug={item.slug}>
+        {item.text}
+    </a>
+    {item.children.length > 0 && (
+        <ul class="toc-list">
+            {item.children.map((child) => <TableOfContentsItem item={child} />)}
+        </ul>
+    )}
+</li>

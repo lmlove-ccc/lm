@@ -1,12 +1,13 @@
 ---
-// src/components/TableOfContents.astro
-export interface Heading {
+import TableOfContentsItem from "@components/TableOfContentsItem.astro";
+
+interface Heading {
     depth: number;
     slug: string;
     text: string;
 }
 
-export interface TocItem extends Heading {
+interface TocItem extends Heading {
     children: TocItem[];
 }
 
@@ -36,21 +37,6 @@ function buildToc(headings: Heading[]): TocItem[] {
 
 const tocTree = buildToc(headings);
 const hasToc = tocTree.length > 0;
-
-function renderTocItems(items: TocItem[]) {
-    return items.map((_item) => (
-        <li class={`toc-item level-${item.depth}`}>
-            <a href={`#${item.slug}`} class="toc-link" data-slug={item.slug}>
-                {item.text}
-            </a>
-            {item.children.length > 0 && (
-                <ul class="toc-list">
-                    {renderTocItems(item.children)}
-                </ul>
-            )}
-        </li>
-    ));
-}
 ---
 
 {
@@ -79,7 +65,7 @@ function renderTocItems(items: TocItem[]) {
 
             <nav class="toc-nav" id="tocNav">
                 <ul class="toc-list">
-                    {renderTocItems(tocTree)}
+                    {tocTree.map((item) => <TableOfContentsItem item={item} />)}
                 </ul>
             </nav>
         </div>

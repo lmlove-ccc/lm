@@ -24,10 +24,13 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
+import cloudflare from "@astrojs/cloudflare";
+
 export default defineConfig({
   site: "https://fuwari.vercel.app/",
   base: "/",
   trailingSlash: "always",
+
   integrations: [
     tailwind({
       nesting: true,
@@ -105,6 +108,7 @@ export default defineConfig({
     svelte(),
     sitemap(),
   ],
+
   markdown: {
     remarkPlugins: [
       remarkMath,
@@ -156,6 +160,7 @@ export default defineConfig({
       ],
     ],
   },
+
   vite: {
     build: {
       rollupOptions: {
@@ -171,4 +176,6 @@ export default defineConfig({
       },
     },
   },
+
+  adapter: cloudflare()
 });

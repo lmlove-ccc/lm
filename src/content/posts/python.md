@@ -4,7 +4,7 @@ published: 2025-12-07
 description: python学习【基于兴趣爱好】
 tags: [python]
 category: 编程
-draft: false
+draft: true
 ---
 # 基于python的学习指导
 ## 1.print（）函数具有以下功能

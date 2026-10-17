@@ -4,7 +4,7 @@ published: 2026-06-28
 description: 壁纸推荐
 tags: [壁纸]
 category: 照片
-draft: false
+draft: true
 ---
 ## 以下是一些wallpaper上的壁纸推荐
 ![](../../../public/images/liberty.png)
